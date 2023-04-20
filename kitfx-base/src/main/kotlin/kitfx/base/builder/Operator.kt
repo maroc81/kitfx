@@ -2,9 +2,17 @@ package kitfx.base.builder
 
 import javafx.scene.Node
 import javafx.scene.control.*
+import javafx.scene.layout.GridPane
 import javafx.scene.layout.Pane
+import kotlin.math.max
 
-
+/**
+ * Adds a button to a ButtonBar
+ */
+operator fun <T: Button> ButtonBar.plus(button: T): T {
+    buttons.add(button)
+    return button
+}
 
 /**
  * Adds a menu item of type [T] to the context menu's list of items
@@ -13,6 +21,33 @@ operator fun <T: MenuItem> ContextMenu.plus(item: T): T {
     items.add(item)
     return item
 }
+
+/**
+ * Adds a node to the current row in a grid pane
+ */
+operator fun <T: Node> GridPane.plus(node: T): T {
+    // Append the node to either the current row index or create
+    // a row at index 0 if no rows exist
+    addRow( max(rowCount -1, 0), node)
+    return node
+}
+
+/**
+ * Adds a menu of type [T] to the menu bar's menus
+ */
+operator fun <T: Menu> MenuBar.plus(menu: T): T {
+    menus.add(menu)
+    return menu
+}
+
+/**
+ * Adds a menu item of type [T] to the menu's list of items
+ */
+operator fun <T: MenuItem> Menu.plus(item: T): T {
+    items.add(item)
+    return item
+}
+
 
 /**
  * Adds a node of type [T] to the pane's list of children
