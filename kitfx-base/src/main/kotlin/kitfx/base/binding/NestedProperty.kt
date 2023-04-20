@@ -5,22 +5,26 @@ import javafx.beans.value.ChangeListener
 import javafx.beans.value.ObservableValue
 import javafx.beans.value.WritableValue
 
+
+
 /**
  * Class that binds to a nested observable property of a parent observable property.
+ *
+ * Adapted from tornadofx .select()
  */
-class SelectionListener<T, N>(
+class NestedProperty<T, N>(
     /** The parent observable value to select the nested value */
-    private val parent: ObservableValue<T?>,
+    private val parent: ObservableValue<T>,
 
-    /** The extractor for the nested value */
-    private val nested: (T?) -> ObservableValue<N?>?
-) : SimpleObjectProperty<N?>() {
+    /** The extractor for the nested observable value */
+    private val nested: (T) -> ObservableValue<N>?
+) : SimpleObjectProperty<N>() {
 
     /** The current nested observable */
-    var currentNested: ObservableValue<N?>? = extractNested()
+    var currentNested: ObservableValue<N>? = extractNested()
 
     /** Listener to invalidate */
-    val changeListener = ChangeListener<Any?> { _, _, _ ->
+    private val changeListener = ChangeListener<Any?> { _, _, _ ->
         invalidated()
         // Fire change event since binding was invalidated
         fireValueChangedEvent()
@@ -35,15 +39,21 @@ class SelectionListener<T, N>(
     /**
      * Extracts the nested observable from the parent observable
      */
-    private fun extractNested(): ObservableValue<N?>? = parent.value?.let(nested)
+    private fun extractNested(): ObservableValue<N>? = parent.value?.let(nested)
 
     /**
      * Removes the change listener from the previous observable and
      * binds to the new observable
      */
     override fun invalidated() {
+        // TODO: It shouldn't be necessary to extract the nested every time
+        //      the nested changes, only when the parent changes
+
+        // Remove the existing listener on the nested property
         currentNested?.removeListener(changeListener)
+        // Extract the new property
         currentNested = extractNested()
+        // Add the listener to the new property
         currentNested?.addListener(changeListener)
     }
 
@@ -57,7 +67,7 @@ class SelectionListener<T, N>(
      * Sets the value of the nest observable of type [N]
      */
     override fun set(v: N?) {
-        (currentNested as WritableValue<*>).value = v
+        (currentNested as? WritableValue<N>)?.value = v
         super.set(v)
     }
 
