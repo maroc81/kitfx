@@ -28,7 +28,7 @@ operator fun <T: MenuItem> ContextMenu.plus(item: T): T {
 operator fun <T: Node> GridPane.plus(node: T): T {
     // Append the node to either the current row index or create
     // a row at index 0 if no rows exist
-    addRow( max(rowCount -1, 0), node)
+    addRow( (rowCount - 1).coerceAtLeast(0), node)
     return node
 }
 

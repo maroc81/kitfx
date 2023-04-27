@@ -1,6 +1,5 @@
 package kitfx.base.binding
 
-import javafx.beans.binding.Bindings
 import javafx.beans.property.Property
 import javafx.beans.value.ObservableValue
 import kitfx.base.property.objectProperty
@@ -62,8 +61,3 @@ fun <T, R> ObservableValue<T>.selectOrDefault(default: R, nested: (T) -> Observa
         nested.invoke(it) ?: objectProperty(default)
     }
 }
-
-/**
- * Creates a string binding by calling toString() on the ObservableValue whenever it changes
- */
-fun <T> ObservableValue<T>.toStringBinding() = Bindings.createStringBinding({ this.toString() }, this)

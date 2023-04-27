@@ -31,19 +31,36 @@ fun kvbox(op: VBox.() -> Unit = {}) = VBox().also(op)
  * Start a grid pane row by adding a new row to the grid pane
  */
 fun GridPane.kgridpanerow(rowOp: GridPane.() -> Unit) {
-    addRow(rowCount)
+    // The only way to add a row without adding a node is to add default/empty constraints
+    rowConstraints.add(RowConstraints())
     this.rowOp()
 }
 
 /**
- * Adds a node
+ * Adds a node to the current grid pane row and column
  */
-fun GridPane.kgridpanenode(colspan: Int, rowspan: Int, rowOp: GridPane.() -> Node) {
-    val rowIndex = max(0, rowCount - 1)
-    val colIndex = max( 0, columnCount - 1)
-    this.add(rowOp(), rowIndex, colIndex, colspan, rowspan)
+fun <T: Node> GridPane.kgridpanenode(column: Int, colspan: Int = 1, rowspan: Int = 1, rowOp: GridPane.() -> T): T {
+    val node = rowOp()
+    val rowIndex = (rowCount - 1).coerceAtLeast(0)
+    this.add(node, column, rowIndex, colspan, rowspan)
+    return node
 }
 
+/**
+ * Adds a pane to an HBox set to always grow
+ */
+fun HBox.kspacer(priority: Priority = Priority.ALWAYS, op: Pane.() -> Unit = {}) = kpane {
+    HBox.setHgrow(this, priority)
+    op()
+}
+
+/**
+ * Adds a pane to an HBox set to always grow
+ */
+fun VBox.kspacer(priority: Priority = Priority.ALWAYS, op: Pane.() -> Unit = {}) = kpane {
+    VBox.setVgrow(this, priority)
+    op()
+}
 
 /**
  * Property for setting hgrow for a node.
@@ -72,6 +89,11 @@ var Node.vgrow: Priority
     set(value) = VBox.setVgrow(this, value)
 
 /**
- * Sets vgrow to always
+ * Convenience function to set hgrow to always
+ */
+fun Node.hgrowAlways() = HBox.setHgrow(this, Priority.ALWAYS)
+
+/**
+ * Convenience function to set vgrow to always
  */
 fun Node.vgrowAlways() = VBox.setVgrow(this, Priority.ALWAYS)
