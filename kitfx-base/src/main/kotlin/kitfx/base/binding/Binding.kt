@@ -1,5 +1,8 @@
 package kitfx.base.binding
 
+import javafx.beans.binding.Bindings
+import javafx.beans.binding.BooleanBinding
+import javafx.beans.binding.StringBinding
 import javafx.beans.property.Property
 import javafx.beans.value.ObservableValue
 import kitfx.base.property.objectProperty
@@ -60,4 +63,18 @@ fun <T, R> ObservableValue<T>.selectOrDefault(default: R, nested: (T) -> Observa
     return NestedProperty(this) {
         nested.invoke(it) ?: objectProperty(default)
     }
+}
+
+/**
+ * Convenience function for creating a string binding from an observable value.
+ */
+fun <T> ObservableValue<T>.stringBinding(op: (T) -> String): StringBinding {
+    return Bindings.createStringBinding({ op(this.value) }, this)
+}
+
+/**
+ * Convenience function for creating a boolean binding from an observable value.
+ */
+fun <T> ObservableValue<T>.booleanBinding(op: (T) -> Boolean): BooleanBinding {
+    return Bindings.createBooleanBinding({ op(this.value) }, this)
 }

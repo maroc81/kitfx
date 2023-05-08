@@ -31,7 +31,7 @@ fun kmenuitem(text: String = "", op: MenuItem.() -> Unit = {}) = MenuItem(text).
 fun kpagination(op: Pagination.() -> Unit = {}) = Pagination().also(op)
 fun kpasswordfield(op: PasswordField.() -> Unit = {}) = PasswordField().also(op)
 fun kprogressbar(op: ProgressBar.() -> Unit = {}) = ProgressBar().also(op)
-fun kprogressindicator(op: ProgressIndicator.() -> Unit = {}) = ProgressIndicator().also(op)
+fun kprogressindicator(progress: Double = 0.0, op: ProgressIndicator.() -> Unit = {}) = ProgressIndicator(progress).also(op)
 fun kradiobutton(op: RadioButton.() -> Unit = {}) = RadioButton().also(op)
 fun kscrollbar(op: ScrollBar.() -> Unit = {}) = ScrollBar().also(op)
 fun kseparator(op: Separator.() -> Unit = {}) = Separator().also(op)

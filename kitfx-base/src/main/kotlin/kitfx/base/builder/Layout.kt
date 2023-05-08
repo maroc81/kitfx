@@ -1,10 +1,12 @@
 package kitfx.base.builder
 
+import javafx.geometry.HPos
+import javafx.geometry.Insets
+import javafx.geometry.VPos
 import javafx.scene.Node
 import javafx.scene.control.*
 import javafx.scene.layout.*
 import javafx.scene.text.TextFlow
-import kotlin.math.max
 
 /**
  * Builders for JavaFX layouts
@@ -46,6 +48,20 @@ fun <T: Node> GridPane.kgridpanenode(column: Int, colspan: Int = 1, rowspan: Int
     return node
 }
 
+fun Node.gridpaneconstraints(
+    columnIndex: Int,
+    rowIndex: Int,
+    columnspan: Int = 1,
+    rowspan: Int = 1,
+    halignment: HPos = HPos.LEFT,
+    valignment: VPos = VPos.BASELINE,
+    hgrow: Priority = Priority.SOMETIMES,
+    vgrow: Priority = Priority.SOMETIMES,
+    margin: Insets = Insets(0.0)
+) {
+    GridPane.setConstraints(this, columnIndex, rowIndex, columnspan, rowspan, halignment, valignment, hgrow, vgrow, margin)
+}
+
 /**
  * Adds a pane to an HBox set to always grow
  */
@@ -63,7 +79,7 @@ fun VBox.kspacer(priority: Priority = Priority.ALWAYS, op: Pane.() -> Unit = {})
 }
 
 /**
- * Property for setting hgrow for a node.
+ * Property for setting HBox hgrow for a node.
  *
  * khbox {
  *     this + ktextfield {
@@ -71,12 +87,12 @@ fun VBox.kspacer(priority: Priority = Priority.ALWAYS, op: Pane.() -> Unit = {})
  *     }
  * }
  */
-var Node.hgrow: Priority
+var Node.hboxgrow: Priority
     get() = HBox.getHgrow(this)
     set(value) = HBox.setHgrow(this, value)
 
 /**
- * Property for setting vgrow for a node.
+ * Property for setting VBox vgrow for a node.
  *
  * kvbox {
  *     this + ktableview {
@@ -84,16 +100,16 @@ var Node.hgrow: Priority
  *     }
  * }
  */
-var Node.vgrow: Priority
+var Node.vboxgrow: Priority
     get() = VBox.getVgrow(this)
     set(value) = VBox.setVgrow(this, value)
 
 /**
- * Convenience function to set hgrow to always
+ * Convenience function to set HBox hgrow to always for a node
  */
-fun Node.hgrowAlways() = HBox.setHgrow(this, Priority.ALWAYS)
+fun Node.hboxgrowAlways() = HBox.setHgrow(this, Priority.ALWAYS)
 
 /**
- * Convenience function to set vgrow to always
+ * Convenience function to set VBox vgrow to always for a node
  */
-fun Node.vgrowAlways() = VBox.setVgrow(this, Priority.ALWAYS)
+fun Node.vboxgrowAlways() = VBox.setVgrow(this, Priority.ALWAYS)
