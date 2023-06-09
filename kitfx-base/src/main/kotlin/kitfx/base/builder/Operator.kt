@@ -4,6 +4,7 @@ import javafx.scene.Node
 import javafx.scene.control.*
 import javafx.scene.layout.GridPane
 import javafx.scene.layout.Pane
+import javafx.scene.layout.Region
 import kotlin.math.max
 
 /**
@@ -33,19 +34,27 @@ operator fun <T: Node> GridPane.plus(node: T): T {
 }
 
 /**
- * Adds a menu of type [T] to the menu bar's menus
- */
-operator fun <T: Menu> MenuBar.plus(menu: T): T {
-    menus.add(menu)
-    return menu
-}
-
-/**
  * Adds a menu item of type [T] to the menu's list of items
  */
 operator fun <T: MenuItem> Menu.plus(item: T): T {
     items.add(item)
     return item
+}
+
+/**
+ * Adds a menu item of type [T] to the menu button's list of items
+ */
+operator fun <T: MenuItem> MenuButton.plus(item: T): T {
+    items.add(item)
+    return item
+}
+
+/**
+ * Adds a menu of type [T] to the menu bar's menus
+ */
+operator fun <T: Menu> MenuBar.plus(menu: T): T {
+    menus.add(menu)
+    return menu
 }
 
 
@@ -60,6 +69,12 @@ operator fun <T: Node> Pane.plus(node: T): T {
     children.add(node)
     return node
 }
+
+operator fun <T: Node> Region.plus(node: T): T {
+
+    return node
+}
+
 
 /**
  * Adds a node of type [T] to the split pane's list of items

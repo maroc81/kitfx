@@ -32,6 +32,7 @@ inline fun <reified T : Any> Region.promptFor(
     /** True if the text field should be multiline (i.e. text area) */
     multiline: Boolean = false,
 
+    /** Converter for converting T to/from String for display */
     converter: StringConverter<T?>,
 
     /** The operation to execute when a  */
