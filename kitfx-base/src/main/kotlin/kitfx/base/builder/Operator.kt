@@ -4,13 +4,11 @@ import javafx.scene.Node
 import javafx.scene.control.*
 import javafx.scene.layout.GridPane
 import javafx.scene.layout.Pane
-import javafx.scene.layout.Region
-import kotlin.math.max
 
 /**
  * Adds a button to a ButtonBar
  */
-operator fun <T: Button> ButtonBar.plus(button: T): T {
+operator fun <T : Button> ButtonBar.plus(button: T): T {
     buttons.add(button)
     return button
 }
@@ -18,7 +16,7 @@ operator fun <T: Button> ButtonBar.plus(button: T): T {
 /**
  * Adds a menu item of type [T] to the context menu's list of items
  */
-operator fun <T: MenuItem> ContextMenu.plus(item: T): T {
+operator fun <T : MenuItem> ContextMenu.plus(item: T): T {
     items.add(item)
     return item
 }
@@ -26,17 +24,17 @@ operator fun <T: MenuItem> ContextMenu.plus(item: T): T {
 /**
  * Adds a node to the current row in a grid pane
  */
-operator fun <T: Node> GridPane.plus(node: T): T {
+operator fun <T : Node> GridPane.plus(node: T): T {
     // Append the node to either the current row index or create
     // a row at index 0 if no rows exist
-    addRow( (rowCount - 1).coerceAtLeast(0), node)
+    addRow((rowCount - 1).coerceAtLeast(0), node)
     return node
 }
 
 /**
  * Adds a menu item of type [T] to the menu's list of items
  */
-operator fun <T: MenuItem> Menu.plus(item: T): T {
+operator fun <T : MenuItem> Menu.plus(item: T): T {
     items.add(item)
     return item
 }
@@ -44,7 +42,7 @@ operator fun <T: MenuItem> Menu.plus(item: T): T {
 /**
  * Adds a menu item of type [T] to the menu button's list of items
  */
-operator fun <T: MenuItem> MenuButton.plus(item: T): T {
+operator fun <T : MenuItem> MenuButton.plus(item: T): T {
     items.add(item)
     return item
 }
@@ -52,11 +50,10 @@ operator fun <T: MenuItem> MenuButton.plus(item: T): T {
 /**
  * Adds a menu of type [T] to the menu bar's menus
  */
-operator fun <T: Menu> MenuBar.plus(menu: T): T {
+operator fun <T : Menu> MenuBar.plus(menu: T): T {
     menus.add(menu)
     return menu
 }
-
 
 /**
  * Adds a node of type [T] to the pane's list of children
@@ -65,21 +62,15 @@ operator fun <T: Menu> MenuBar.plus(menu: T): T {
  *     this + klabel("Label")
  * }
  */
-operator fun <T: Node> Pane.plus(node: T): T {
+operator fun <T : Node> Pane.plus(node: T): T {
     children.add(node)
     return node
 }
 
-operator fun <T: Node> Region.plus(node: T): T {
-
-    return node
-}
-
-
 /**
  * Adds a node of type [T] to the split pane's list of items
  */
-operator fun <T: Node> SplitPane.plus(node: T): T {
+operator fun <T : Node> SplitPane.plus(node: T): T {
     items.add(node)
     return node
 }
@@ -95,7 +86,7 @@ operator fun <S, T> TableView<S>.plus(column: TableColumn<S, T>): TableColumn<S,
 /**
  * Adds a tab of type [T] to the tab pane's list of tabs
  */
-operator fun <T: Tab> TabPane.plus(tab: T): T {
+operator fun <T : Tab> TabPane.plus(tab: T): T {
     tabs.add(tab)
     return tab
 }
@@ -103,7 +94,7 @@ operator fun <T: Tab> TabPane.plus(tab: T): T {
 /**
  * Adds a node of type [T] to the toolbar's list of items
  */
-operator fun <T: Node> ToolBar.plus(node: T): T {
+operator fun <T : Node> ToolBar.plus(node: T): T {
     items.add(node)
     return node
 }

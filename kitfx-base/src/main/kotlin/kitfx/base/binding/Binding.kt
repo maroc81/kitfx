@@ -1,8 +1,7 @@
 package kitfx.base.binding
 
-import javafx.beans.binding.Bindings
-import javafx.beans.binding.BooleanBinding
-import javafx.beans.binding.StringBinding
+import javafx.beans.Observable
+import javafx.beans.binding.*
 import javafx.beans.property.Property
 import javafx.beans.value.ObservableValue
 import kitfx.base.property.objectProperty
@@ -68,13 +67,41 @@ fun <T, R> ObservableValue<T>.selectOrDefault(default: R, nested: (T) -> Observa
 /**
  * Convenience function for creating a string binding from an observable value.
  */
-fun <T> ObservableValue<T>.stringBinding(op: (T) -> String): StringBinding {
-    return Bindings.createStringBinding({ op(this.value) }, this)
+fun <T> ObservableValue<T>.stringBinding(vararg dependencies: Observable, op: (T) -> String): StringBinding {
+    return Bindings.createStringBinding({ op(this.value) }, this, *dependencies)
 }
 
 /**
  * Convenience function for creating a boolean binding from an observable value.
  */
-fun <T> ObservableValue<T>.booleanBinding(op: (T) -> Boolean): BooleanBinding {
-    return Bindings.createBooleanBinding({ op(this.value) }, this)
+fun <T> ObservableValue<T>.booleanBinding(vararg dependencies: Observable, op: (T) -> Boolean): BooleanBinding {
+    return Bindings.createBooleanBinding({ op(this.value) }, this, *dependencies)
+}
+
+/**
+ * Convenience function for creating an integer binding from an observable value.
+ */
+fun <T> ObservableValue<T>.integerBinding(vararg dependencies: Observable, op: (T?) -> Int): IntegerBinding {
+    return Bindings.createIntegerBinding({ op(this.value) }, this, *dependencies)
+}
+
+/**
+ * Convenience function for creating an integer binding from an observable value.
+ */
+fun <T> ObservableValue<T>.longBinding(vararg dependencies: Observable, op: (T?) -> Long): LongBinding {
+    return Bindings.createLongBinding({ op(this.value) }, this, *dependencies)
+}
+
+/**
+ * Convenience function for creating a double binding from an observable value.
+ */
+fun <T> ObservableValue<T>.doubleBinding(vararg dependencies: Observable, op: (T?) -> Double): DoubleBinding {
+    return Bindings.createDoubleBinding({ op(this.value) }, this, *dependencies)
+}
+
+/**
+ * Convenience function for creating a float binding from an observable value.
+ */
+fun <T> ObservableValue<T>.floatBinding(vararg dependencies: Observable, op: (T?) -> Float): FloatBinding {
+    return Bindings.createFloatBinding({ op(this.value) }, this, *dependencies)
 }
