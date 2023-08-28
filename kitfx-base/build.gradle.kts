@@ -33,6 +33,9 @@ javafx {
     modules = listOf("javafx.controls", "javafx.fxml", "javafx.web")
 }
 
+group = "com.github.maroc81"
+version = "0.1"
+
 kotlin {
     jvmToolchain(11)
 }
@@ -50,8 +53,8 @@ publishing {
     }
     publications {
         create<MavenPublication>("maven") {
-            groupId = "com.github.maroc81.kitfx"
-            artifactId = "library"
+            groupId = "com.github.maroc81"
+            artifactId = "kitfx-base"
             version = "0.1"
 
             from(components["java"])
