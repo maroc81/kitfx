@@ -3,9 +3,11 @@ package kitfx.base.dialog
 import javafx.scene.Node
 import javafx.scene.control.Alert
 import javafx.scene.control.ButtonType
+import javafx.scene.control.TextArea
 import javafx.stage.FileChooser
 import javafx.stage.Window
 import java.io.File
+import java.lang.Exception
 
 /**
  * Constructs a JavaFX alert
@@ -46,7 +48,16 @@ inline fun warning(
     title: String? = null,
     graphic: Node? = null,
     actionFn: Alert.(ButtonType) -> Unit = {}
-) = alert(Alert.AlertType.WARNING, header, content, *buttons, owner = owner, title = title, graphic = graphic, actionFn = actionFn)
+) = alert(
+    Alert.AlertType.WARNING,
+    header,
+    content,
+    *buttons,
+    owner = owner,
+    title = title,
+    graphic = graphic,
+    actionFn = actionFn
+)
 
 /**
  * Convenience function to construct an Alert with type set to error
@@ -55,11 +66,57 @@ inline fun error(
     header: String,
     content: String? = null,
     vararg buttons: ButtonType,
-    owner: Window? = null, title:
-    String? = null, graphic:
-    Node? = null,
+    owner: Window? = null,
+    title: String? = null,
+    graphic: Node? = null,
     actionFn: Alert.(ButtonType) -> Unit = {}
-) = alert(Alert.AlertType.ERROR, header, content, *buttons, owner = owner, title = title, graphic = graphic, actionFn = actionFn)
+) = alert(
+    Alert.AlertType.ERROR,
+    header,
+    content,
+    *buttons,
+    owner = owner,
+    title = title,
+    graphic = graphic,
+    actionFn = actionFn
+)
+
+/**
+ * Convenience function to construct an error Alert for showing an exception
+ */
+inline fun exception(
+    header: String,
+    vararg buttons: ButtonType,
+    owner: Window? = null,
+    title: String? = null,
+    graphic: Node? = null,
+    exception: Throwable,
+    actionFn: Alert.(ButtonType) -> Unit = {}
+): Alert {
+
+    val exceptionText = exception.stackTraceToString()
+    val textArea = TextArea(exceptionText).apply {
+        isEditable = false
+        isWrapText = false
+        maxWidth = Double.MAX_VALUE
+        maxHeight = Double.MAX_VALUE
+    }
+
+    val alert = alert(
+        Alert.AlertType.ERROR,
+        header,
+        content = null,
+        *buttons,
+        owner = owner,
+        title = title,
+        graphic = graphic,
+        actionFn = actionFn
+    )
+
+    alert.dialogPane.expandableContent = textArea
+
+    return alert
+}
 
 /**
  * Convenience function to construct an Alert with type set to information
@@ -72,7 +129,16 @@ inline fun information(
     title: String? = null,
     graphic: Node? = null,
     actionFn: Alert.(ButtonType) -> Unit = {}
-) = alert(Alert.AlertType.INFORMATION, header, content, *buttons, owner = owner, title = title, graphic = graphic, actionFn = actionFn)
+) = alert(
+    Alert.AlertType.INFORMATION,
+    header,
+    content,
+    *buttons,
+    owner = owner,
+    title = title,
+    graphic = graphic,
+    actionFn = actionFn
+)
 
 /**
  * Convenience function to construct an Alert with type set to confirmation
@@ -101,7 +167,16 @@ inline fun confirmationOkCancel(
     graphic: Node? = null,
     actionFn: () -> Unit
 ) {
-    alert(Alert.AlertType.CONFIRMATION, header, content, confirmButton, cancelButton, owner = owner, title = title, graphic = graphic) {
+    alert(
+        Alert.AlertType.CONFIRMATION,
+        header,
+        content,
+        confirmButton,
+        cancelButton,
+        owner = owner,
+        title = title,
+        graphic = graphic
+    ) {
         if (it == confirmButton) actionFn()
     }
 }
@@ -111,13 +186,14 @@ enum class FileChooserMode { None, Single, Multi, Save }
 /**
  * Convenience function to construct a FileChooser
  */
-fun chooseFile(title: String? = null,
-               filters: Array<out FileChooser.ExtensionFilter>,
-               initialDirectory: File? = null,
-               initialFileName: String? = null,
-               mode: FileChooserMode = FileChooserMode.Single,
-               owner: Window? = null,
-               op: FileChooser.() -> Unit = {}
+fun chooseFile(
+    title: String? = null,
+    filters: Array<out FileChooser.ExtensionFilter>,
+    initialDirectory: File? = null,
+    initialFileName: String? = null,
+    mode: FileChooserMode = FileChooserMode.Single,
+    owner: Window? = null,
+    op: FileChooser.() -> Unit = {}
 ): List<File> {
     val chooser = FileChooser()
     if (title != null) chooser.title = title
