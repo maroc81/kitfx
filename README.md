@@ -179,9 +179,14 @@ class MainWindow : BorderPane() {
                     }
                     // Add tab and create table view in tab
                     this + ktab("TableView") {
-                        content = vbox {
+                        content = kvbox {
                             tableViewForObject = this + ktableview<ModelSubObject> {
                                 // Items are set by tree view selection
+                                
+                                // The plain Kotlin + JavaFX way
+                                columns += TableColumn<ModelSubObject, Int>("ID").apply {
+                                    setCellValueFactory { it.value.idProperty() }
+                                }
 
                                 // Columns are always manually constructed in KitFX which is a bit more
                                 // verbose but is consistent and less confusing than the many 
@@ -191,7 +196,8 @@ class MainWindow : BorderPane() {
                                 }
 
                                 // You could use the PropertyValueFactory but it turns out to be more
-                                // verbose than above, plus you lose static checks 
+                                // verbose than above, plus you lose static checks, plus PropertyValueFactory
+                                // is deprecated
                                 this + ktablecolumn<ModelSubObject, Int>("ID") {
                                     cellValueFactory = PropertyValueFactory<ModelSubObject, Int>("idProperty")
                                 }
@@ -199,9 +205,15 @@ class MainWindow : BorderPane() {
                                 // OpenJFX 19 introduced a well overdue function "flatMap" to bind/select sub properties
                                 // In TornadoFX you used select: {it.value.subSubObjectProperty().select(SubSubObject::nameProperty)}
                                 this + ktablecolumn<ModelSubObject, String>("SubSubObjectName") {
-                                    // If subSubObjectPropertyChanges, the name shown in the table column will
-                                    // also update
+                                    // If subSubObjectPropertyChanges, the name shown in the table column will also update
+                                    // NOTE: Properties created with flatMap are editable but the changes will NOT
+                                    //       be written back to the nested property. 
                                     setCellValueFactory { it.value.subSubObjectProperty().flatMap(SubSubObject::nameProperty) }
+                                }
+                                
+                                // If the sub property needs to be modified, use the KitFX select binding
+                                this + ktablecolumn<ModelSubObject, String>("SubSubObjectName") {
+                                    setCellValueFactory { it.value.subSubObjectProperty().select { it.nameProperty() } }
                                 }
                             }
                         }
@@ -250,6 +262,58 @@ TornadoFX only requires 2 lines of code but a property delegate must be instanti
 ```
 
 ## Bindings
+JavaFX provides a number of useful bindings in the Bindings package.  Many of these are clunky to use with kotlin due to the lambda as the first argument.
 
+For example, to create a string binding using the Bindings package:
+```kotlin
+    // String binding for person's first name and last name that will update
+    // if the person property changes, or if the first or last name properties change
+    val personFirstLastName = Bindings.createStringBinding({
+        if (person != null) {
+            "${person?.firstName} ${person?.lastName}"
+        } else ""
+    }, personProperty, firstNameProperty, lastNameProperty)
+```
+
+With KitFX this is simplified to a more standard kotlin syntax:
+```kotlin
+    val personFirstLastName = personProperty.stringBinding(firstNameProperty, lastNameProperty) { 
+        "${it?.firstName} ${it?.lastName}"
+    }
+```
+
+Note that in the examples above, firstNameProperty and lastNameProperty are nested properties derived from personProperty.  If the value in personProperty changes, the firstNameProperty and lastNameProperty must be updated with the new properties. As mentioned above, version 19 of OpenJFX added `flatMap` that produces read-only versions of those properties:
+
+```kotlin
+    // Create properties that binds to new properties when personProperty changes
+    val firstNameProperty = personProperty.flatMap(Person::firstNameProperty)
+    val lastNameProperty = personProperty.flatMap(Person::lastNameProperty)
+
+    // Could also do:
+    val firstNameProperty = personProperty.flatMap { it.firstNameProperty() }
+    val lastNameProperty = personProperty.flatMap { it.lastNameProperty() }
+```
+
+What about producing an editable version of the first and last name properties? TornadoFX provided an extremely useful "select" function that created a "nested" property that binds, unbinds, etc as needed.  That TornadoFX code has been pulled into KitFX into a separate NestedProperty class with similar "select" bindings.
+
+KitFX "select" bindings:
+
+```kotlin
+    // Creates an editable property that binds/unbinds as needed to the first and last name properties
+    // whenever personProperty changes
+    val firstNameProperty = personProperty.select { it.firstNameProperty() }
+    val lastNameProperty = personProperty.select { it.lastNameProperty() }
+
+    // Nullable bindings are also provided for the case where personProperty can be null
+    // The code below will set firstNameProperty to null when personProperty is null
+    val personProperty = SimpleObjectProperty<Person?>(null)
+    val firstNameProperty: Property<String?> = personProperty.selectOrNull { it?.firstNameProperty() }
+
+    // And for the case where a default value should be returned if person is null
+    // The code below will set firstNameProperty to a default value when personProperty is null
+    val personProperty = SimpleObjectProperty<Person?>(null)
+    val firstNameProperty: Property<String?> = personProperty.selectOrDefault("Person Is Null") { it?.firstNameProperty() }
+
+```
 
 ## Collections
