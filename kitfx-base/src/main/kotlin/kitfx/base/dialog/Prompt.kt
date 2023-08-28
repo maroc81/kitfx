@@ -9,6 +9,7 @@ import javafx.scene.control.ButtonType
 import javafx.scene.control.Dialog
 import javafx.scene.layout.Region
 import javafx.stage.Modality
+import javafx.util.Callback
 import javafx.util.StringConverter
 import javafx.util.converter.DefaultStringConverter
 import javafx.util.converter.FloatStringConverter
@@ -41,7 +42,8 @@ inline fun <reified T : Any> Region.promptFor(
     val property = SimpleObjectProperty<T?>(initialValue)
     val inputProperty = SimpleStringProperty()
 
-    val dialog = Dialog<T>().apply {
+    // Force T to be nullable so that null is returned if the prompt is cancelled
+    val dialog = Dialog<T?>().apply {
         prefWidth = 500.0
         this.title = title
         initModality(Modality.APPLICATION_MODAL)
@@ -86,14 +88,15 @@ inline fun <reified T : Any> Region.promptFor(
         }
 
         // Create converter for the dialog result
-        setResultConverter {
+        setResultConverter(Callback<ButtonType, T?> {
             if (it == ButtonType.OK) {
                 property.get()
-            } else initialValue
-        }
+            } else null
+        })
     }
 
-    dialog.showAndWait().ifPresent { onDone(it) }
+    // Show blocking dialog and only call onDone() if OK was clicked
+    dialog.showAndWait().ifPresent { if (it != null) onDone(it) }
 }
 
 /**
