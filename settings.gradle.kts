@@ -10,4 +10,4 @@
 
 rootProject.name = "kitfx"
 include("kitfx-base")
-include("generator")
+//include("generator")

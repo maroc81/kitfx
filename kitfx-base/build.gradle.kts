@@ -13,6 +13,9 @@ plugins {
 
     // Apply the javafx plugin
     id("org.openjfx.javafxplugin") version "0.0.13"
+
+    // Plugin for publishing
+    id("maven-publish")
 }
 
 repositories {
@@ -32,5 +35,27 @@ javafx {
 
 kotlin {
     jvmToolchain(11)
+}
+
+publishing {
+    repositories {
+        maven {
+            name = "GitHubPackages"
+            url = "https://maven.pkg.github.com/maroc81/kitfx"
+            credentials {
+                username = System.getenv("GITHUB_ACTOR")
+                password = System.getenv("GITHUB_TOKEN")
+            }
+        }
+    }
+    publications {
+        create<MavenPublication>("maven") {
+            groupId = "com.github.maroc81.kitfx"
+            artifactId = "library"
+            version = "0.1"
+
+            from(components["java"])
+        }
+    }
 }
 
