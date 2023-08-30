@@ -47,7 +47,7 @@ class SortedFilteredList<T>(
 ) : ObservableList<T> {
 
     init {
-        items.addListener(InvalidationListener { refilter() })
+        items.addListener(ListChangeListener { refilter() })
     }
 
     // Should setAll be forwarded to the underlying list? This might be needed for full editing capabilities,
@@ -170,10 +170,11 @@ class SortedFilteredList<T>(
             super.set(newValue)
             filteredItems.predicate = Predicate { newValue(it) }
         }
-
-
     }
-    var predicate: ((T) -> Boolean); get() = predicateProperty.get(); set(value) = predicateProperty.set(value)
+    var predicate: ((T) -> Boolean)?
+        get() = predicateProperty.get();
+        set(value) = predicateProperty.set(value)
+
 
     /**
      * Bind this data object to the given TableView.
