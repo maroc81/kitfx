@@ -7,7 +7,6 @@ import javafx.scene.control.TextArea
 import javafx.stage.FileChooser
 import javafx.stage.Window
 import java.io.File
-import java.lang.Exception
 
 /**
  * Constructs a JavaFX alert
@@ -22,6 +21,7 @@ inline fun alert(
     owner: Window? = null,
     title: String? = null,
     graphic: Node? = null,
+    expandableContent: Node? = null,
     actionFn: Alert.(ButtonType) -> Unit = {}
 ): Alert {
 
@@ -30,6 +30,7 @@ inline fun alert(
     graphic?.let { alert.graphic = it }
     alert.headerText = header
     owner?.also { alert.initOwner(it) }
+    expandableContent?.let { alert.dialogPane.expandableContent = it }
     val buttonClicked = alert.showAndWait()
     if (buttonClicked.isPresent) {
         alert.actionFn(buttonClicked.get())
@@ -102,20 +103,17 @@ inline fun exception(
         maxHeight = Double.MAX_VALUE
     }
 
-    val alert = alert(
+    return alert(
         Alert.AlertType.ERROR,
         header,
-        content = null,
+        content = exception.message,
         *buttons,
         owner = owner,
         title = title,
         graphic = graphic,
-        actionFn = actionFn
+        actionFn = actionFn,
+        expandableContent = textArea
     )
-
-    alert.dialogPane.expandableContent = textArea
-
-    return alert
 }
 
 /**
